@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Neuer Thread - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="forum-header">
+    <h1>Neuer Thread in {{ category.name }}</h1>
+    
+    <nav class="breadcrumb">
+        <a href="{{ url_for('forum.index') }}">Forum</a> > 
+        <a href="{{ url_for('forum.category', category_id=category.id) }}">{{ category.name }}</a> > 
+        Neuer Thread
+    </nav>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('forum.new_thread', category_id=category.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control", placeholder="Thread-Titel") }}
+            {% if form.title.errors %}
+                <div class="form-errors">
+                    {% for error in form.title.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows="10", placeholder="Ihr Beitrag...") }}
+            {% if form.content.errors %}
+                <div class="form-errors">
+                    {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('forum.category', category_id=category.id) }}" class="btn btn-secondary">Abbrechen</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

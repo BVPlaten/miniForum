@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}{{ thread.title }} - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="forum-header">
+    <h1>{{ thread.title }}</h1>
+    
+    <nav class="breadcrumb">
+        <a href="{{ url_for('forum.index') }}">Forum</a> > 
+        <a href="{{ url_for('forum.category', category_id=thread.category.id) }}">{{ thread.category.name }}</a> > 
+        {{ thread.title }}
+    </nav>
+</div>
+
+<div class="thread-actions">
+    {% if current_user.is_authenticated and not thread.is_locked %}
+        <button class="btn btn-primary" onclick="scrollToReply()">Antworten</button>
+    {% endif %}
+    {% if thread.is_locked %}
+        <span class="thread-locked">🔒 Gesperrt</span>
+    {% endif %}
+    {% if thread.is_pinned %}
+        <span class="thread-pinned">📌 Angepinnt</span>
+    {% endif %}
+</div>
+
+<div class="posts-list">
+    {% for post in posts.items %}
+        <div class="post-item" id="post-{{ post.id }}">
+            <div class="post-header">
+                <div class="post-author">
+                    <a href="{{ url_for('forum.user_profile', username=post.author.username) }}">
+                        <strong>{{ post.author.username }}</strong>
+                    </a>
+                    <small class="post-date">{{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                </div>
+            </div>
+            
+            <div class="post-content">
+                {{ post.content|safe|nl2br }}
+            </div>
+            
+            <div class="post-footer">
+                {% if current_user.is_authenticated and not thread.is_locked %}
+                    <button class="btn btn-sm btn-reply" onclick="replyToPost({{ post.id }})">
+                        Antworten
+                    </button>
+                {% endif %}
+            </div>
+            
+            <!-- Replies to this post -->
+            {% if post_replies[post.id] %}
+                <div class="post-replies">
+                    {% for reply in post_replies[post.id] %}
+                        <div class="reply-item">
+                            <div class="reply-header">
+                                <a href="{{ url_for('forum.user_profile', username=reply.author.username) }}">
+                                    <strong>{{ reply.author.username }}</strong>
+                                </a>
+                                <small class="reply-date">{{ reply.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                            </div>
+                            <div class="reply-content">
+                                {{ reply.content|safe|nl2br }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+{% if posts.pages > 1 %}
+<div class="pagination">
+    {% if posts.has_prev %}
+        <a href="{{ url_for('forum.thread', thread_id=thread.id, page=posts.prev_num) }}" class="btn btn-sm">&laquo; Zurück</a>
+    {% endif %}
+    
+    <span>Seite {{ posts.page }} von {{ posts.pages }}</span>
+    
+    {% if posts.has_next %}
+        <a href="{{ url_for('forum.thread', thread_id=thread.id, page=posts.next_num) }}" class="btn btn-sm">Weiter &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if current_user.is_authenticated and not thread.is_locked %}
+<div class="reply-form" id="reply-form">
+    <h3>Antworten</h3>
+    <form method="POST" action="{{ url_for('forum.reply', thread_id=thread.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows="5", placeholder="Ihre Antwort...") }}
+            {% if form.content.errors %}
+                <div class="form-errors">
+                    {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function scrollToReply() {
+    document.getElementById('reply-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+function replyToPost(postId) {
+    // Add @username reference to reply form
+    const postElement = document.getElementById('post-' + postId);
+    const username = postElement.querySelector('.post-author strong').textContent;
+    const textarea = document.querySelector('#reply-form textarea');
+    
+    const currentValue = textarea.value;
+    const replyText = `@${username}: `;
+    
+    if (!currentValue.includes(replyText)) {
+        textarea.value = replyText + currentValue;
+    }
+    
+    scrollToReply();
+    textarea.focus();
+}
+</script>
+{% endblock %}

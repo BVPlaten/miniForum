@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Posteingang - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="messages-header">
+    <h1>Posteingang</h1>
+    
+    <nav class="message-nav">
+        <a href="{{ url_for('messages.inbox') }}" class="active">Posteingang</a>
+        <a href="{{ url_for('messages.sent') }}">Gesendet</a>
+        <a href="{{ url_for('messages.compose') }}">Neue Nachricht</a>
+    </nav>
+</div>
+
+<div class="messages-actions">
+    <a href="{{ url_for('messages.compose') }}" class="btn btn-primary">Neue Nachricht</a>
+</div>
+
+<div class="messages-list">
+    {% for message in messages.items %}
+        <div class="message-item {% if not message.is_read %}unread{% endif %}">
+            <div class="message-main">
+                <h3>
+                    <a href="{{ url_for('messages.view_message', message_id=message.id) }}">
+                        {{ message.subject }}
+                    </a>
+                </h3>
+                <div class="message-meta">
+                    <span class="sender">
+                        Von: <a href="{{ url_for('forum.user_profile', username=message.sender.username) }}">{{ message.sender.username }}</a>
+                    </span>
+                    <span class="date">{{ message.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+            </div>
+            
+            <div class="message-preview">
+                {{ message.content[:100] }}{% if message.content|length > 100 %}...{% endif %}
+            </div>
+            
+            <div class="message-actions">
+                <a href="{{ url_for('messages.view_message', message_id=message.id) }}" class="btn btn-sm">Ansehen</a>
+                <a href="{{ url_for('messages.reply', message_id=message.id) }}" class="btn btn-sm">Antworten</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if messages.pages > 1 %}
+<div class="pagination">
+    {% if messages.has_prev %}
+        <a href="{{ url_for('messages.inbox', page=messages.prev_num) }}" class="btn btn-sm">&laquo; Zurück</a>
+    {% endif %}
+    
+    <span>Seite {{ messages.page }} von {{ messages.pages }}</span>
+    
+    {% if messages.has_next %}
+        <a href="{{ url_for('messages.inbox', page=messages.next_num) }}" class="btn btn-sm">Weiter &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if not messages.items %}
+<div class="empty-state">
+    <h2>Keine Nachrichten im Posteingang</h2>
+    <p><a href="{{ url_for('messages.compose') }}">Schreiben Sie Ihre erste Nachricht</a></p>
+</div>
+{% endif %}
+{% endblock %}

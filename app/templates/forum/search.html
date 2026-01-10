@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Suche - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="forum-header">
+    <h1>Suche</h1>
+</div>
+
+<div class="search-container">
+    <form method="POST" action="{{ url_for('forum.search') }}" class="search-form">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.query.label(class="form-label") }}
+            {{ form.query(class="form-control", placeholder="Suchbegriff eingeben...") }}
+            {% if form.query.errors %}
+                <div class="form-errors">
+                    {% for error in form.query.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+
+{% if results %}
+<div class="search-results">
+    <h2>Suchergebnisse{% if form.query.data %} für "{{ form.query.data }}"{% endif %}</h2>
+    
+    {% if results.items %}
+        <div class="threads-list">
+            {% for thread in results.items %}
+                <div class="thread-item">
+                    <div class="thread-main">
+                        <h3>
+                            <a href="{{ url_for('forum.thread', thread_id=thread.id) }}">
+                                {{ thread.title }}
+                            </a>
+                        </h3>
+                        <div class="thread-meta">
+                            <span class="author">
+                                von <a href="{{ url_for('forum.user_profile', username=thread.author.username) }}">{{ thread.author.username }}</a>
+                            </span>
+                            <span class="date">{{ thread.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                            <span class="category">
+                                in <a href="{{ url_for('forum.category', category_id=thread.category.id) }}">{{ thread.category.name }}</a>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="thread-stats">
+                        <span class="replies">{{ thread.get_post_count() - 1 }} Antworten</span>
+                        <span class="views">{{ thread.view_count }} Aufrufe</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if results.pages > 1 %}
+        <div class="pagination">
+            {% if results.has_prev %}
+                <a href="{{ url_for('forum.search', page=results.prev_num) }}" class="btn btn-sm">&laquo; Zurück</a>
+            {% endif %}
+            
+            <span>Seite {{ results.page }} von {{ results.pages }}</span>
+            
+            {% if results.has_next %}
+                <a href="{{ url_for('forum.search', page=results.next_num) }}" class="btn btn-sm">Weiter &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <p>Keine Ergebnisse gefunden.</p>
+        </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ message.subject }} - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="messages-header">
+    <h1>{{ message.subject }}</h1>
+    
+    <nav class="message-nav">
+        <a href="{{ url_for('messages.inbox') }}">Posteingang</a>
+        <a href="{{ url_for('messages.sent') }}">Gesendet</a>
+        <a href="{{ url_for('messages.compose') }}">Neue Nachricht</a>
+    </nav>
+</div>
+
+<div class="message-view">
+    <div class="message-header">
+        <div class="message-meta">
+            {% if current_user == message.sender %}
+                <span class="recipient">
+                    An: <a href="{{ url_for('forum.user_profile', username=message.recipient.username) }}">{{ message.recipient.username }}</a>
+                </span>
+            {% else %}
+                <span class="sender">
+                    Von: <a href="{{ url_for('forum.user_profile', username=message.sender.username) }}">{{ message.sender.username }}</a>
+                </span>
+            {% endif %}
+            <span class="date">{{ message.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+            {% if not message.is_read and current_user == message.recipient %}
+                <span class="message-status">Ungelesen</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="message-content">
+        {{ message.content|safe|nl2br }}
+    </div>
+    
+    <div class="message-actions">
+        {% if current_user == message.recipient %}
+            <a href="{{ url_for('messages.reply', message_id=message.id) }}" class="btn btn-primary">Antworten</a>
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('messages.delete_message', message_id=message.id) }}" style="display: inline;">
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Möchten Sie diese Nachricht wirklich löschen?')">
+                Löschen
+            </button>
+        </form>
+        
+        <a href="{{ url_for('messages.inbox') }}" class="btn btn-secondary">Zurück zum Posteingang</a>
+    </div>
+</div>
+{% endblock %}

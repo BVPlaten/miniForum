@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ config.FORUM_NAME }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <a href="{{ url_for('forum.index') }}">{{ config.FORUM_NAME }}</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
+                    <li><a href="{{ url_for('forum.search') }}">Suche</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-messages">
+                            <a href="{{ url_for('messages.inbox') }}">
+                                Nachrichten
+                                {% set unread_count = current_user.get_unread_message_count() %}
+                                {% if unread_count > 0 %}
+                                    <span class="unread-badge">{{ unread_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li><a href="{{ url_for('forum.user_profile', username=current_user.username) }}">{{ current_user.username }}</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('auth.login') }}">Anmelden</a></li>
+                        <li><a href="{{ url_for('auth.register') }}">Registrieren</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 {{ config.FORUM_NAME }}. Eine ressourcenschonende Forum-Anwendung.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

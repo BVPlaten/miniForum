@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Profil: {{ user.username }} - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <h1>Benutzerprofil: {{ user.username }}</h1>
+    
+    {% if user.bio %}
+        <div class="profile-bio">
+            <p>{{ user.bio }}</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="profile-stats">
+    <div class="stat-item">
+        <strong>{{ user.get_post_count() }}</strong>
+        <span>Beiträge</span>
+    </div>
+    <div class="stat-item">
+        <strong>{{ user.get_thread_count() }}</strong>
+        <span>Threads</span>
+    </div>
+    <div class="stat-item">
+        <strong>{{ user.get_unread_message_count() }}</strong>
+        <span>ungelesene Nachrichten</span>
+    </div>
+    <div class="stat-item">
+        <strong>{{ user.created_at.strftime('%d.%m.%Y') }}</strong>
+        <span>beigetreten</span>
+    </div>
+</div>
+
+{% if recent_threads %}
+<div class="profile-section">
+    <h2>Letzte Threads</h2>
+    <div class="threads-list">
+        {% for thread in recent_threads %}
+            <div class="thread-item">
+                <h3>
+                    <a href="{{ url_for('forum.thread', thread_id=thread.id) }}">
+                        {{ thread.title }}
+                    </a>
+                </h3>
+                <div class="thread-meta">
+                    <span class="date">{{ thread.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    <span class="category">
+                        in <a href="{{ url_for('forum.category', category_id=thread.category.id) }}">{{ thread.category.name }}</a>
+                    </span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if recent_posts %}
+<div class="profile-section">
+    <h2>Letzte Beiträge</h2>
+    <div class="posts-list">
+        {% for post in recent_posts %}
+            <div class="post-item">
+                <div class="post-header">
+                    <a href="{{ url_for('forum.thread', thread_id=post.thread.id) }}#post-{{ post.id }}">
+                        in {{ post.thread.title }}
+                    </a>
+                    <small class="post-date">{{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                </div>
+                <div class="post-content">
+                    {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if current_user == user %}
+<div class="profile-actions">
+    <a href="{{ url_for('messages.inbox') }}" class="btn btn-primary">
+        Nachrichten ({{ user.get_unread_message_count() }} ungelesen)
+    </a>
+</div>
+{% endif %}
+{% endblock %}

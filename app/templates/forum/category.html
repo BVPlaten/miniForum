@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} - {{ config.FORUM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="forum-header">
+    <h1>{{ category.name }}</h1>
+    {% if category.description %}
+        <p>{{ category.description }}</p>
+    {% endif %}
+    
+    <nav class="breadcrumb">
+        <a href="{{ url_for('forum.index') }}">Forum</a> > {{ category.name }}
+    </nav>
+</div>
+
+<div class="forum-actions">
+    {% if current_user.is_authenticated and not category.is_locked %}
+        <a href="{{ url_for('forum.new_thread', category_id=category.id) }}" class="btn btn-primary">
+            Neuer Thread
+        </a>
+    {% endif %}
+</div>
+
+<div class="threads-list">
+    {% for thread in threads.items %}
+        <div class="thread-item {% if thread.is_pinned %}pinned{% endif %}">
+            <div class="thread-main">
+                <h3>
+                    <a href="{{ url_for('forum.thread', thread_id=thread.id) }}">
+                        {% if thread.is_pinned %}📌 {% endif %}
+                        {{ thread.title }}
+                    </a>
+                </h3>
+                <div class="thread-meta">
+                    <span class="author">
+                        von <a href="{{ url_for('forum.user_profile', username=thread.author.username) }}">{{ thread.author.username }}</a>
+                    </span>
+                    <span class="date">{{ thread.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+            </div>
+            
+            <div class="thread-stats">
+                <span class="replies">{{ thread.get_post_count() - 1 }} Antworten</span>
+                <span class="views">{{ thread.view_count }} Aufrufe</span>
+            </div>
+            
+            {% set last_post = thread.get_last_post() %}
+            {% if last_post %}
+                <div class="thread-last-post">
+                    <small>
+                        Letzter Beitrag von 
+                        <a href="{{ url_for('forum.user_profile', username=last_post.author.username) }}">
+                            {{ last_post.author.username }}
+                        </a>
+                        <br>
+                        {{ last_post.created_at.strftime('%d.%m.%Y %H:%M') }}
+                    </small>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+{% if threads.pages > 1 %}
+<div class="pagination">
+    {% if threads.has_prev %}
+        <a href="{{ url_for('forum.category', category_id=category.id, page=threads.prev_num) }}" class="btn btn-sm">&laquo; Zurück</a>
+    {% endif %}
+    
+    <span>Seite {{ threads.page }} von {{ threads.pages }}</span>
+    
+    {% if threads.has_next %}
+        <a href="{{ url_for('forum.category', category_id=category.id, page=threads.next_num) }}" class="btn btn-sm">Weiter &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
