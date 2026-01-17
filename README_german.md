@@ -326,9 +326,9 @@ gunicorn -c deploy/openwrt/gunicorn.conf.py run:app
 Oder mit systemd Service:
 systemctl start miniForum
 
-================================================================================
+===================================================
 KONFIGURATION
-================================================================================
+===================================================
 
 UMGEBUNGSVARIABLEN:
 -------------------
@@ -351,9 +351,9 @@ GUNICORN_WORKERS    - Anzahl Worker-Prozesse (Standard: 2)
 GUNICORN_THREADS    - Threads pro Worker (Standard: 1)
 GUNICORN_MAX_REQUESTS - Worker-Restart nach Requests (Standard: 1000)
 
-================================================================================
+===================================================
 WARTUNG UND FEHLERBEHEBUNG
-================================================================================
+===================================================
 
 DATENBANK-BACKUP:
 -----------------
@@ -384,9 +384,9 @@ Lösung: Gunicorn-Worker reduzieren, Cache-Timeout verkürzen
 Problem: Bild-Upload funktioniert nicht
 Lösung: Upload-Verzeichnis prüfen, Schreibrechte prüfen, Dateigröße prüfen
 
-================================================================================
+===================================================
 PERFORMANCE-MONITORING
-================================================================================
+===================================================
 
 SPEICHERVERBRAUCH PRÜFEN:
 -------------------------
@@ -406,9 +406,9 @@ CACHE-EFFEKTIVITÄT:
 Cache-Hits: In Logs prüfen
 Cache-Performance: response times vergleichen
 
-================================================================================
+===================================================
 ZUKUNFTSERWEITERUNGEN
-================================================================================
+===================================================
 
 Die Anwendung ist bereits vorbereitet für:
 
@@ -437,9 +437,9 @@ ERWEITERTE SUCHE:
 - Search-Indexes bereits definiert
 - Performance-getestet für kleine bis mittlere Foren
 
-================================================================================
+===================================================
 SICHERHEITSHINWEISE
-================================================================================
+===================================================
 
 PRODUKTIONSEINSATZ:
 -------------------
@@ -461,9 +461,9 @@ BENUTZERRECHTE:
 - is_active Flag für Account-Sperrung
 - IP-Logging bei Bedarf aktivieren
 
-================================================================================
+===================================================
 RESSOURCEN UND SPEZIFIKATIONEN
-================================================================================
+===================================================
 
 MINIMALE SYSTEMANFORDERUNGEN:
 -----------------------------
@@ -486,9 +486,9 @@ PERFORMANCE-ZIELE:
 - Gleichzeitige Benutzer: 10-20 ohne Degradation
 - Datenbank-Queries: <100ms (99% der Queries)
 
-================================================================================
+===================================================
 SUPPORT UND WEITERE HILFE
-================================================================================
+===================================================
 
 Bei Fragen oder Problemen:
 - README.txt gründlich lesen
@@ -500,15 +500,15 @@ Dokumentation: Diese Datei (readme.txt)
 Konfiguration: config.py
 Beispiele: deploy/openwrt/
 
-================================================================================
+===================================================
 LIZENZ UND CREDITS
-================================================================================
+===================================================
 
 Dies ist eine Open-Source-Anwendung für ressourcenschonende Foren.
 Optimiert für OpenWRT und eingebettete Systeme.
 
 Entwickelt mit Flask, SQLAlchemy, SQLite für minimale Ressourcennutzung.
 
-================================================================================
+===================================================
 ENDE DER DOKUMENTATION
-================================================================================
+===================================================
