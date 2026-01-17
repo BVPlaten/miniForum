@@ -1,14 +1,12 @@
-================================================================================
-MINIFORUM - Ressourcenschonende Forum-Webanwendung für eingebettete Systeme
-================================================================================
+## MINIFORUM - Ressourcenschonende Forum-Webanwendung für eingebettete Systeme
 
 Dies ist eine leichtgewichtige Forum-Anwendung, speziell optimiert für extrem
 ressourcenbeschränkte Hardware wie OpenWRT-Router. Die Anwendung läuft mit
 weniger als 50MB RAM und unterstützt 10-20 gleichzeitige Benutzer.
 
-================================================================================
+===================================================
 DESIGN-PHILOSOPHIE UND ARCHITEKTUR
-================================================================================
+===================================================
 
 KISS-Prinzip (Keep It Simple, Stupid)
 --------------------------------------
@@ -33,9 +31,9 @@ Modulare Architektur
 - Wiederverwendbare Komponenten
 - Erweiterbarkeit für zukünftige Features
 
-================================================================================
+===================================================
 DATEISTRUKTUR UND AUFGABENBEREICHE
-================================================================================
+===================================================
 
 Hauptverzeichnis:
 -----------------
@@ -62,9 +60,9 @@ thread.py            - Diskussionsthemen (Threads)
 post.py              - Beiträge und Antworten
 message.py           - Private Nachrichten
 
-================================================================================
+===================================================
 DETAILLIERTE DATEI-ERKLÄRUNGEN
-================================================================================
+===================================================
 
 config.py
 ---------
@@ -233,9 +231,9 @@ ZUKUNFTSSICHERHEIT:
 - subject Feld für Betreffzeilen
 - content für Nachrichtentext
 
-================================================================================
+===================================================
 INSTALLATION UND SETUP
-================================================================================
+===================================================
 
 VORAUSSETZUNGEN:
 ----------------
